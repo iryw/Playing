@@ -1,0 +1,6 @@
+Usage:
+------
+~~~~~~
+% playing [-nocolor]
+~~~~~~
+
