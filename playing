@@ -1,0 +1,43 @@
+#!/usr/bin/env python
+# coding: utf-8
+import sys, subprocess
+
+# If iTunes is not open exit the script.
+if "iTunes.app" not in subprocess.check_output(["ps", "-ax"]):
+  sys.exit(1)
+
+# Check if iTunes is playing or not.
+status = subprocess.check_output(
+  ["osascript", "-e", 'tell application "iTunes" to player state as string']
+).strip()
+
+if status == 'playing':
+  # Grab the artist name.
+  artist = subprocess.check_output(
+    ["osascript", "-e",
+     'tell application "iTunes" to artist of current track as string']
+    ).strip()
+
+  # Grab the current track.
+  track = subprocess.check_output(
+    ["osascript", "-e"
+     'tell application "iTunes" to name of current track as string']
+    ).strip()
+
+  # Output:
+  if len(sys.argv) == 2 and sys.argv[1] == "-nocolor":
+    print "Now Playing: %s - %s" % ( artist, track )
+  else:
+    color = {
+        'white': "\033[0;37m",
+        'black': "\033[0;36m",
+        'artist': "\033[1;32m",
+        'track': "\033[1;36m",
+        'reset': "\033[0m"
+        }
+
+    print color['white'] + "Now Playing:",\
+          color['artist'] + artist + color['reset'],\
+          u'–',\
+          color['track'] + track
+
