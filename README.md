@@ -1,6 +1,8 @@
 Usage:
 ------
 ~~~~~~
-% playing [-nocolor]
+% playing -nocolor
+Now Playing: Shadow Child - String Thing
 ~~~~~~
+![colored output](scrots/color.png)
 
