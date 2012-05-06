@@ -1,3 +1,12 @@
+Installing:
+-----------
+~~~~~~
+% git clone git://github.com/iryw/Playing.git
+% cd Playing
+% chmod +x playing
+% mv /usr/local/bin # Or anywhere you have defined in your PATH
+~~~~~~
+
 Usage:
 ------
 ~~~~~~
