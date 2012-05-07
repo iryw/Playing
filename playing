@@ -3,10 +3,18 @@
 #forking for Spotify
 import sys, subprocess
 
-app_name = "Spotify"
+app_name = ["iTunes", "Spotify"]
 
-# If iTunes is not open exit the script.
-if "%s.app" % app_name not in subprocess.check_output(["ps", "-ax"]):
+# Set a flag to figure out what program is running. If any.
+for app in app_name:
+  if "%s.app" % app not in subprocess.check_output(["ps", "-ax"]):
+    found = False
+  else:
+    found = True
+    # Reset app_name
+    app_name = app
+
+if not found:
   sys.exit(1)
 
 # Check if iTunes is playing or not.
