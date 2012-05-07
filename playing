@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # coding: utf-8
-#forking for Spotify
 import sys, subprocess
 
 app_name = ["iTunes", "Spotify"]
