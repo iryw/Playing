@@ -1,3 +1,5 @@
+***This script will not work unless you have osascript installed.***
+
 Installing:
 -----------
 ~~~~~~
@@ -16,4 +18,4 @@ Now Playing: Shadow Child - String Thing
 ![colored output](https://github.com/iryw/Playing/raw/master/scrots/color.png)
 
 Note that you must have either iTunes or Spotify open to use this script.
-This script will not work unless you have osascript installed.
+
