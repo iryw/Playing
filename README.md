@@ -1,4 +1,5 @@
 ![colored output](https://github.com/iryw/Playing/raw/master/scrots/color.png)
+
 ***This script will not work unless you have osascript installed.***
 
 Installing:
