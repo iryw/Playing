@@ -1,52 +1,123 @@
 #!/usr/bin/env python
 # coding: utf-8
-import sys, subprocess
+import sys, subprocess, optparse
 
-app_name = ["iTunes", "Spotify"]
+# Applications to use.
+app_list = ["iTunes", "Spotify"]
 
-# Set a flag to figure out what program is running. If any.
-for app in app_name:
-  if "%s.app" % app not in subprocess.check_output(["ps", "-ax"]):
-    found = False
+def application_open(app):
+  """Look through all open processes for 'app'.app."""
+  if app + ".app" in subprocess.check_output(["ps", "-ax"]):
+    return True
   else:
-    found = True
-    # Reset app_name
-    app_name = app
+    return False
 
-if not found:
-  sys.exit(1)
+def application_player_state(app):
+  """Returns the player state of app."""
+  try:
+    return subprocess.check_output(
+        ["osascript", "-e", 'tell application "%s"'\
+        'to player state as string' % app_name]
+      ).strip()
+  except subprocess.CalledProcessError:
+    sys.exit(1)
 
-# Check if iTunes is playing or not.
-status = subprocess.check_output(
-  ["osascript", "-e", 'tell application "%s" to player state as string' % app_name]
-).strip()
+def get_song_details(app):
+  """Returns a list containing the track's artist and title."""
+  try:
+    return subprocess.check_output(
+      ["osascript", "-e",
+      'tell application "%s" to name of current track'\
+      '&"#"& artist of current track' % app]
+      ).strip().split('#')
+  except subprocess.CalledProcessError:
+    sys.exit(1)
 
-if status == 'playing':
-  # Grab the artist name.
-  artist = subprocess.check_output(
-    ["osascript", "-e",
-     'tell application "%s" to artist of current track as string' % app_name]
-    ).strip()
-
-  # Grab the current track.
-  track = subprocess.check_output(
-    ["osascript", "-e"
-     'tell application "%s" to name of current track as string' % app_name]
-    ).strip()
-
-  # Output:
-  if len(sys.argv) == 2 and sys.argv[1] == "-nocolor":
-    print "Now Playing: %s - %s" % ( artist, track )
-  else:
+def print_playing(artist, track, colorful=False):
+  """Prints the currently playing song."""
+  if colorful:
+    # This dictionary is full of escape sequences and color codes.
+    # If you want to define different colors do so in this dict.
+    # More bash color codes can be found here:
+    # https://wiki.archlinux.org/index.php/Color_Bash_Prompt
     color = {
-        'white': "\033[0;37m",
-        'black': "\033[0;36m",
-        'artist': "\033[1;32m",
-        'track': "\033[1;36m",
-        'reset': "\033[0m"
-        }
+              'white': "\033[0;37m",
+              'black': "\033[0;36m",
+              'artist': "\033[1;32m",
+              'track': "\033[1;36m",
+              'reset': "\033[0m"
+              }
 
     print color['white'] + "Now Playing:",\
           color['artist'] + artist + color['reset'],\
           u'–',\
-          color['track'] + track
+          color['track'] + track + color['reset']
+  else:
+    print "Now Playing: %s - %s" % ( artist, track )
+
+# Flag to determine if the application we want is open.
+found = False
+for app in app_list:
+  if application_open(app):
+    # Set the found flag to true.
+    found = True
+    # Reset to use correct application.
+    app_name = app
+    # Found an open application, use it.
+    break
+
+# Main program loop.
+try:
+  op = optparse.OptionParser()
+  # Add plain text option.
+  op.add_option('-p', '--plain',
+    help="prints plain text",
+    dest="p",
+    default=True,
+    action="store_false"
+  )
+  # Add monitoring option, allowing the program to be left open.
+  op.add_option('-m', '--monitor',
+    help="allows the program to be left running, updating with each new play.",
+    dest="m",
+    default=False,
+    action="store_true"
+  )
+  # Initial set of prev_track
+  prev_track = False
+  # Initialize opts dict
+  opts, args = op.parse_args()
+  while found:
+    # If the Application is closed exit the script.
+    if application_open(app_name) == False:
+      sys.exit(1)
+
+    # Determine the play state of the Application
+    play_state = application_player_state(app_name)
+
+    # Get the current Artist and Title of currently playing song.
+    if play_state == 'playing':
+      track, artist = get_song_details(app_name)
+      
+      if prev_track == False:
+        # First run-through, output current song.
+        print_playing(artist, track, opts.p)
+        # If not monitoring break the loop.
+        if not opts.m: break
+      elif prev_track != track:
+        # Different track!
+        if opts.m:
+          # Print currently playing and continue the loop.
+          print_playing(artist, track, opts.p)
+        else:
+          # Otherwise print and exit.
+          print_playing(artist, track, opts.p)
+          break
+
+      # Set the previous track to the current one.
+      prev_track = track
+  else:
+    sys.exit(1)
+except KeyboardInterrupt:
+  # Silently exit on ^C
+  sys.exit(1)

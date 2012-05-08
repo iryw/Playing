@@ -1,3 +1,4 @@
+![colored output](https://github.com/iryw/Playing/raw/master/scrots/color.png)
 ***This script will not work unless you have osascript installed.***
 
 Installing:
@@ -12,10 +13,13 @@ Installing:
 Usage:
 ------
 ~~~~~~
-% playing -nocolor
-Now Playing: Shadow Child - String Thing
+Usage: playing [options]
+
+Options:
+  -h, --help     show this help message and exit
+  -p, --plain    prints plain text
+  -m, --monitor  allows the program to be left running, updating with each new
+                 play.
 ~~~~~~
-![colored output](https://github.com/iryw/Playing/raw/master/scrots/color.png)
 
-Note that you must have either iTunes or Spotify open to use this script.
-
+_Note that you must have either iTunes or Spotify open to use this script._
