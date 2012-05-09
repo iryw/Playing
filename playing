@@ -33,8 +33,13 @@ def get_song_details(app):
   except subprocess.CalledProcessError:
     sys.exit(1)
 
-def print_playing(artist, track, colorful=False):
+def print_playing(artist, track, colorful=False, icon=False):
   """Prints the currently playing song."""
+  if icon == False:
+    playing = "Now Playing:"
+  else:
+    playing = u'♬'
+
   if colorful:
     # This dictionary is full of escape sequences and color codes.
     # If you want to define different colors do so in this dict.
@@ -48,12 +53,12 @@ def print_playing(artist, track, colorful=False):
               'reset': "\033[0m"
               }
 
-    print color['white'] + "Now Playing:",\
+    print color['white'] + playing,\
           color['artist'] + artist + color['reset'],\
-          u'–',\
+          color['white'] + u'–',\
           color['track'] + track + color['reset']
   else:
-    print "Now Playing: %s - %s" % ( artist, track )
+    print "%s %s - %s" % ( playing, artist, track )
 
 # Flag to determine if the application we want is open.
 found = False
@@ -83,6 +88,13 @@ try:
     default=False,
     action="store_true"
   )
+  # This option will change Now Playing to the ♬  icon.
+  op.add_option('-i', '--icon',
+    help="Prints an icon instead of ``Now Playing``",
+    dest="i",
+    default=False,
+    action="store_true"
+  )
   # Initial set of prev_track
   prev_track = False
   # Initialize opts dict
@@ -101,17 +113,17 @@ try:
       
       if prev_track == False:
         # First run-through, output current song.
-        print_playing(artist, track, opts.p)
+        print_playing(artist, track, opts.p, opts.i)
         # If not monitoring break the loop.
         if not opts.m: break
       elif prev_track != track:
         # Different track!
         if opts.m:
           # Print currently playing and continue the loop.
-          print_playing(artist, track, opts.p)
+          print_playing(artist, track, opts.p, opts.i)
         else:
           # Otherwise print and exit.
-          print_playing(artist, track, opts.p)
+          print_playing(artist, track, opts.p, opts.i)
           break
 
       # Set the previous track to the current one.

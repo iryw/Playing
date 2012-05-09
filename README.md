@@ -1,6 +1,7 @@
 ![colored output](https://github.com/iryw/Playing/raw/master/scrots/colored_options.png)
 
 ***This script will not work unless you have osascript installed.***
+_Note that you must have either iTunes or Spotify open to use this script._
 
 Installing:
 -----------
@@ -21,6 +22,5 @@ Options:
   -p, --plain    prints plain text
   -m, --monitor  allows the program to be left running, updating with each new
                  play.
+  -i, --icon     Prints an icon instead of ``Now Playing``
 ~~~~~~
-
-_Note that you must have either iTunes or Spotify open to use this script._
