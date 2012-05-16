@@ -88,12 +88,12 @@ try:
     default=False,
     action="store_true"
   )
-  # This option will change Now Playing to the ♬  icon.
-  op.add_option('-i', '--icon',
-    help="Prints an icon instead of ``Now Playing``",
+  # This option will change the ♬  icon to `Now Playing`.
+  op.add_option('-t', '--texticon',
+    help="Prints `Now Playing` instead of an icon.",
     dest="i",
-    default=False,
-    action="store_true"
+    default=True,
+    action="store_false"
   )
   # Initial set of prev_track
   prev_track = False
